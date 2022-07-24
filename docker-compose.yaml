@@ -1,0 +1,16 @@
+version: '3.7'
+
+networks:
+  markov-discord-go:
+
+services:
+  registry:
+    image: registry:2
+    container_name: markov-discord-go-registry
+    hostname: registry
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - 5000:5000
+    networks:
+      - markov-discord-go

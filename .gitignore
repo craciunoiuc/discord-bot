@@ -1,0 +1,4 @@
+# Ignore distributables folder
+dist/
+data/
+.env
