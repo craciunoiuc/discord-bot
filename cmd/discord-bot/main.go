@@ -97,7 +97,7 @@ It currently supports:
 	)
 
 	// Subcommands
-	// rootCmd.AddCommand(startCmd)
+	rootCmd.AddCommand(startCmd)
 
 	return rootCmd
 }
