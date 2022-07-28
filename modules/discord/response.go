@@ -33,7 +33,9 @@ package discord
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	spec "github.com/craciunoiuc/discord-bot/spec"
@@ -114,8 +116,24 @@ func doCommandHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
+func doCommandCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if rand.Intn(2) == 0 {
+		s.ChannelMessageSend(m.ChannelID, "Head")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, "Tail")
+	}
+}
+
+func doCommandRiggedCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
+	s.ChannelMessageSend(m.ChannelID, "Head")
+}
+
 func init() {
+	rand.Seed(time.Now().UnixNano())
+
 	commands = make(map[string]Command)
 	commands["ping"] = doCommandPing
 	commands["help"] = doCommandHelp
+	commands["coinflip"] = doCommandCoinflip
+	commands["cοinflip"] = doCommandRiggedCoinflip
 }
