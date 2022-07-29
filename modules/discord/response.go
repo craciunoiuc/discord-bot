@@ -2,7 +2,7 @@ package discord
 
 // SPDX-License-Identifier: BSD-3-Clause
 //
-// Authors: Cezar Craciunoiu <cezar.craciunoiu@gmail.com>
+// Authors: Cezar Craciunoiu <cezar.craciunoiu@gmail.com>, Denis Ehorovici <dehorovici@gmail.com>
 //
 // Copyright (c) 2022, Universitatea POLITEHNICA Bucharest.  All rights reserved.
 //
@@ -48,23 +48,6 @@ var commandsCollection *types.SortedMap[string, Command]
 
 // Cringe objective used for the cringe command
 var cringeObjective *CringeObjective
-
-// Handle cringe messages
-func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if messageIsCringe(m) {
-		message, error := s.ChannelMessageSendReply(m.ChannelID, "cringe", m.Reference())
-		if message == nil {
-			fmt.Println(error.Error())
-		}
-	}
-
-	if messageIsFromCringeMaster(m) && messageHasStickersFromBlacklistedGuild(s, m) {
-		message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/genshin-impact-zyzz-gif-24919214", m.Reference())
-		if message == nil {
-			fmt.Println(error.Error())
-		}
-	}
-}
 
 // Parses all messages sent to the bot and calls the appropriate command
 func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {

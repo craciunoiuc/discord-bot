@@ -33,3 +33,19 @@ func messageHasStickersFromBlacklistedGuild(s *discordgo.Session, m *discordgo.M
 
 	return guildIsBlacklistedForStickers(sticker.GuildID)
 }
+
+func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if messageIsCringe(m) {
+		message, error := s.ChannelMessageSendReply(m.ChannelID, "cringe", m.Reference())
+		if message == nil {
+			fmt.Println(error.Error())
+		}
+	}
+
+	if messageIsFromCringeMaster(m) && messageHasStickersFromBlacklistedGuild(s, m) {
+		message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/genshin-impact-zyzz-gif-24919214", m.Reference())
+		if message == nil {
+			fmt.Println(error.Error())
+		}
+	}
+}
