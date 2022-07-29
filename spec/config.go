@@ -42,11 +42,11 @@ type MarkovConfig struct {
 }
 
 type DiscordConfig struct {
-	Token               string   `yaml:"token"     env:"DISCORD_TOKEN"     default:""`
-	Channel             string   `yaml:"channel"   env:"DISCORD_CHANNEL"   default:""`
-	Prefix              string   `yaml:"prefix"    env:"DISCORD_PREFIX"    default:"~"`
-	GenshinGuildIds     []string `yaml:"genshinGuildIds"                   default:"[]"`
-	CringeMasterUserIds []string `yaml:"cringeMasterUserIds"               default:"[]"`
+	Token                     string   `yaml:"token"     env:"DISCORD_TOKEN"     default:""`
+	Channel                   string   `yaml:"channel"   env:"DISCORD_CHANNEL"   default:""`
+	Prefix                    string   `yaml:"prefix"    env:"DISCORD_PREFIX"    default:"~"`
+	BlacklistStickersGuildIds []string `yaml:"blacklistStickersGuildIds"         default:"[]"`
+	CringeMasterUserIds       []string `yaml:"cringeMasterUserIds"               default:"[]"`
 }
 
 type Config struct {

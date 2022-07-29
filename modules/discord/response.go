@@ -57,8 +57,8 @@ func messageIsFromCringeMaster(m *discordgo.MessageCreate) bool {
 	return slices.Contains(spec.Cfg.DiscordCfg.CringeMasterUserIds, m.Author.ID)
 }
 
-func guildIsGenshin(guildId string) bool {
-	return slices.Contains(spec.Cfg.DiscordCfg.GenshinGuildIds, guildId)
+func guildIsBlacklistedForStickers(guildId string) bool {
+	return slices.Contains(spec.Cfg.DiscordCfg.BlacklistStickersGuildIds, guildId)
 }
 
 func messageIsGenshin(s *discordgo.Session, m *discordgo.MessageCreate) bool {
@@ -72,7 +72,7 @@ func messageIsGenshin(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 		return false
 	}
 
-	return guildIsGenshin(sticker.GuildID)
+	return guildIsBlacklistedForStickers(sticker.GuildID)
 }
 
 // Parses all messages sent to the bot and calls the appropriate command
