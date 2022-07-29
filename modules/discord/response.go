@@ -61,7 +61,7 @@ func guildIsBlacklistedForStickers(guildId string) bool {
 	return slices.Contains(spec.Cfg.DiscordCfg.BlacklistStickersGuildIds, guildId)
 }
 
-func messageIsGenshin(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+func messageHasStickersFromBlacklistedGuild(s *discordgo.Session, m *discordgo.MessageCreate) bool {
 	if m.StickerItems == nil {
 		return false
 	}
@@ -89,7 +89,7 @@ func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	if messageIsFromCringeMaster(m) && messageIsGenshin(s, m) {
+	if messageIsFromCringeMaster(m) && messageHasStickersFromBlacklistedGuild(s, m) {
 		message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/genshin-impact-zyzz-gif-24919214", m.Reference())
 		if message == nil {
 			fmt.Println(error.Error())
