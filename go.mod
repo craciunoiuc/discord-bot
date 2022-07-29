@@ -6,6 +6,7 @@ require (
 	github.com/bwmarrin/discordgo v0.25.0
 	github.com/muesli/termenv v0.12.0
 	github.com/spf13/cobra v1.5.0
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
 	gopkg.in/yaml.v2 v2.4.0
 )
 
