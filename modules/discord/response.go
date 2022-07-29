@@ -38,7 +38,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	types "github.com/craciunoiuc/discord-bot/modules/types"
+	types "github.com/craciunoiuc/discord-bot/internal/types"
 	spec "github.com/craciunoiuc/discord-bot/spec"
 )
 
