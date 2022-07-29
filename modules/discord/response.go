@@ -38,14 +38,11 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	types "github.com/craciunoiuc/discord-bot/modules/types"
 	spec "github.com/craciunoiuc/discord-bot/spec"
 )
 
-// Command is a function that handles a command. All command should have the same type.
-type Command func(s *discordgo.Session, m *discordgo.MessageCreate)
-
-// The list of commands initialized at startup
-var commands map[string]Command
+var commandsCollection *types.SortedMap[string, Command]
 
 // Parses all messages sent to the bot and calls the appropriate command
 func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -92,8 +89,8 @@ func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Get the command and call it
-	if command, ok := commands[words[0]]; ok {
-		command(s, m)
+	if command, ok := commandsCollection.Get(words[0]); ok {
+		command.function(s, m)
 	} else {
 		doCommandHelp(s, m)
 	}
@@ -107,8 +104,14 @@ func doCommandHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 	msg := "List of commands:\n"
 	msg += "```\n"
 
-	for command := range commands {
-		msg += " " + spec.Cfg.DiscordCfg.Prefix + command + "\n"
+	for _, key := range commandsCollection.GetSortedKeys() {
+		value, found := commandsCollection.Get(key)
+
+		if !found || value.hidden {
+			continue
+		}
+
+		msg += " " + spec.Cfg.DiscordCfg.Prefix + key + ": " + value.description + "\n"
 	}
 
 	msg += "```"
@@ -131,9 +134,9 @@ func doCommandRiggedCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
 func init() {
 	rand.Seed(time.Now().UnixNano())
 
-	commands = make(map[string]Command)
-	commands["ping"] = doCommandPing
-	commands["help"] = doCommandHelp
-	commands["coinflip"] = doCommandCoinflip
-	commands["cοinflip"] = doCommandRiggedCoinflip
+	commandsCollection = types.NewSortedMap[string, Command]()
+	commandsCollection.Add("help", Command{doCommandHelp, "Displays help menu", false})
+	commandsCollection.Add("ping", Command{doCommandPing, "Pong!", false})
+	commandsCollection.Add("coinflip", Command{doCommandCoinflip, "Coinflip", false})
+	commandsCollection.Add("cοinflip", Command{doCommandRiggedCoinflip, "Rigged coinflip", true})
 }
