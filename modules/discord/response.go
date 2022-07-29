@@ -37,51 +37,20 @@ import (
 	"strings"
 	"time"
 
-	linq "github.com/ahmetb/go-linq"
 	"github.com/bwmarrin/discordgo"
-	"golang.org/x/exp/slices"
 
 	types "github.com/craciunoiuc/discord-bot/internal/types"
 	spec "github.com/craciunoiuc/discord-bot/spec"
 )
 
+// Collection of all commands
 var commandsCollection *types.SortedMap[string, Command]
 
+// Cringe objective used for the cringe command
 var cringeObjective *CringeObjective
 
-func messageIsCringe(m *discordgo.MessageCreate) bool {
-	return cringeObjective != nil && slices.Contains(cringeObjective.targetUserIds, m.Author.ID)
-}
-
-func messageIsFromCringeMaster(m *discordgo.MessageCreate) bool {
-	return slices.Contains(spec.Cfg.DiscordCfg.CringeMasterUserIds, m.Author.ID)
-}
-
-func guildIsBlacklistedForStickers(guildId string) bool {
-	return slices.Contains(spec.Cfg.DiscordCfg.BlacklistStickersGuildIds, guildId)
-}
-
-func messageHasStickersFromBlacklistedGuild(s *discordgo.Session, m *discordgo.MessageCreate) bool {
-	if m.StickerItems == nil {
-		return false
-	}
-
-	sticker, error := getStickerData(s, m.StickerItems[0].ID)
-	if error != nil {
-		fmt.Println(error.Error())
-		return false
-	}
-
-	return guildIsBlacklistedForStickers(sticker.GuildID)
-}
-
-// Parses all messages sent to the bot and calls the appropriate command
-func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignore all messages created by the bot itself
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
+// Handle cringe messages
+func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if messageIsCringe(m) {
 		message, error := s.ChannelMessageSendReply(m.ChannelID, "cringe", m.Reference())
 		if message == nil {
@@ -95,6 +64,16 @@ func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Println(error.Error())
 		}
 	}
+}
+
+// Parses all messages sent to the bot and calls the appropriate command
+func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Ignore all messages created by the bot itself
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	handleCringeMessages(s, m)
 
 	// Ignore all messages that don't start with the tag
 	if !strings.HasPrefix(m.Content, "<@"+s.State.User.ID+"> ") &&
@@ -137,69 +116,18 @@ func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if command, ok := commandsCollection.Get(words[0]); ok {
 		command.function(s, m)
 	} else {
-		doCommandHelp(s, m)
+		helpMenu(s, m)
 	}
-}
-
-func doCommandPing(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Pong!")
-}
-
-func doCommandHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
-	msg := "List of commands:\n"
-	msg += "```\n"
-
-	for _, key := range commandsCollection.GetSortedKeys() {
-		value, found := commandsCollection.Get(key)
-
-		if !found || value.hidden {
-			continue
-		}
-
-		msg += spec.Cfg.DiscordCfg.Prefix + key + ": " + value.description + "\n"
-	}
-
-	msg += "```"
-
-	s.ChannelMessageSend(m.ChannelID, msg)
-}
-
-func doCommandCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if rand.Intn(2) == 0 {
-		s.ChannelMessageSendReply(m.ChannelID, "Head", m.Reference())
-	} else {
-		s.ChannelMessageSendReply(m.ChannelID, "Tail", m.Reference())
-	}
-}
-
-func doCommandRiggedCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSendReply(m.ChannelID, "Head", m.Reference())
-}
-
-func doCommandCringe(s *discordgo.Session, m *discordgo.MessageCreate) {
-	var userIds []string
-
-	linq.From(m.Mentions).Where(func(i interface{}) bool {
-		return !i.(*discordgo.User).Bot
-	}).Select(func(i interface{}) interface{} {
-		return i.(*discordgo.User).ID
-	}).ToSlice(&userIds)
-
-	cringeObjective = newCringeObjective(userIds)
-}
-
-func doCommandUncringe(s *discordgo.Session, m *discordgo.MessageCreate) {
-	cringeObjective = nil
 }
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 
 	commandsCollection = types.NewSortedMap[string, Command]()
-	commandsCollection.Add("help", Command{doCommandHelp, "Displays help menu", false})
-	commandsCollection.Add("ping", Command{doCommandPing, "Pong!", false})
-	commandsCollection.Add("coinflip", Command{doCommandCoinflip, "Coinflip", false})
-	commandsCollection.Add("cοinflip", Command{doCommandRiggedCoinflip, "Rigged coinflip", true})
-	commandsCollection.Add("cringe", Command{doCommandCringe, "Destroy the cringe (mention users)", true})
-	commandsCollection.Add("uncringe", Command{doCommandUncringe, "Stop cringing... for now", true})
+	commandsCollection.Add("help", Command{helpMenu, "Displays help menu", false})
+	commandsCollection.Add("ping", Command{pingPong, "Pong!", false})
+	commandsCollection.Add("coinflip", Command{coinflip, "Coinflip", false})
+	commandsCollection.Add("cοinflip", Command{riggedCoinflip, "Rigged coinflip", true})
+	commandsCollection.Add("cringe", Command{cringe, "Destroy the cringe (mention users)", true})
+	commandsCollection.Add("uncringe", Command{uncringe, "Stop cringing... for now", true})
 }
