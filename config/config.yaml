@@ -37,6 +37,14 @@ discord:
   token:   'TOKEN'
   channel: 'bot_control'
   prefix:  '~'
+  genshinGuildIds:
+    [
+      '865768900662788107',
+      '522681957373575168',
+      '671490249460940802',
+      '418652140454674432',
+    ]
+  cringeMasterUserIds: ['213670603712888832']
 
 # Markov Chain
 # ===========

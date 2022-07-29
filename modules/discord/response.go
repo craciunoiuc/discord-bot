@@ -37,12 +37,43 @@ import (
 	"strings"
 	"time"
 
+	linq "github.com/ahmetb/go-linq"
 	"github.com/bwmarrin/discordgo"
+	"golang.org/x/exp/slices"
+
 	types "github.com/craciunoiuc/discord-bot/internal/types"
 	spec "github.com/craciunoiuc/discord-bot/spec"
 )
 
 var commandsCollection *types.SortedMap[string, Command]
+
+var cringeObjective *CringeObjective
+
+func messageIsCringe(m *discordgo.MessageCreate) bool {
+	return cringeObjective != nil && slices.Contains(cringeObjective.targetUserIds, m.Author.ID)
+}
+
+func messageIsFromCringeMaster(m *discordgo.MessageCreate) bool {
+	return slices.Contains(spec.Cfg.DiscordCfg.CringeMasterUserIds, m.Author.ID)
+}
+
+func guildIsGenshin(guildId string) bool {
+	return slices.Contains(spec.Cfg.DiscordCfg.GenshinGuildIds, guildId)
+}
+
+func messageIsGenshin(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	if m.StickerItems == nil {
+		return false
+	}
+
+	sticker, error := getStickerData(s, m.StickerItems[0].ID)
+	if error != nil {
+		fmt.Println(error.Error())
+		return false
+	}
+
+	return guildIsGenshin(sticker.GuildID)
+}
 
 // Parses all messages sent to the bot and calls the appropriate command
 func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -51,19 +82,33 @@ func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	if messageIsCringe(m) {
+		message, error := s.ChannelMessageSendReply(m.ChannelID, "cringe", m.Reference())
+		if message == nil {
+			fmt.Println(error.Error())
+		}
+	}
+
+	if messageIsFromCringeMaster(m) && messageIsGenshin(s, m) {
+		message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/genshin-impact-zyzz-gif-24919214", m.Reference())
+		if message == nil {
+			fmt.Println(error.Error())
+		}
+	}
+
 	// Ignore all messages that don't start with the tag
 	if !strings.HasPrefix(m.Content, "<@"+s.State.User.ID+"> ") &&
 		!strings.HasPrefix(m.Content, spec.Cfg.DiscordCfg.Prefix) {
 		return
 	}
 
-	idMap := make(map[string]string)
 	channels, err := s.GuildChannels(m.GuildID)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
+	idMap := make(map[string]string)
 	for _, channel := range channels {
 		idMap[channel.Name] = channel.ID
 	}
@@ -111,7 +156,7 @@ func doCommandHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 			continue
 		}
 
-		msg += " " + spec.Cfg.DiscordCfg.Prefix + key + ": " + value.description + "\n"
+		msg += spec.Cfg.DiscordCfg.Prefix + key + ": " + value.description + "\n"
 	}
 
 	msg += "```"
@@ -121,14 +166,30 @@ func doCommandHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func doCommandCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if rand.Intn(2) == 0 {
-		s.ChannelMessageSend(m.ChannelID, "Head")
+		s.ChannelMessageSendReply(m.ChannelID, "Head", m.Reference())
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "Tail")
+		s.ChannelMessageSendReply(m.ChannelID, "Tail", m.Reference())
 	}
 }
 
 func doCommandRiggedCoinflip(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Head")
+	s.ChannelMessageSendReply(m.ChannelID, "Head", m.Reference())
+}
+
+func doCommandCringe(s *discordgo.Session, m *discordgo.MessageCreate) {
+	var userIds []string
+
+	linq.From(m.Mentions).Where(func(i interface{}) bool {
+		return !i.(*discordgo.User).Bot
+	}).Select(func(i interface{}) interface{} {
+		return i.(*discordgo.User).ID
+	}).ToSlice(&userIds)
+
+	cringeObjective = newCringeObjective(userIds)
+}
+
+func doCommandUncringe(s *discordgo.Session, m *discordgo.MessageCreate) {
+	cringeObjective = nil
 }
 
 func init() {
@@ -139,4 +200,6 @@ func init() {
 	commandsCollection.Add("ping", Command{doCommandPing, "Pong!", false})
 	commandsCollection.Add("coinflip", Command{doCommandCoinflip, "Coinflip", false})
 	commandsCollection.Add("cοinflip", Command{doCommandRiggedCoinflip, "Rigged coinflip", true})
+	commandsCollection.Add("cringe", Command{doCommandCringe, "Destroy the cringe (mention users)", true})
+	commandsCollection.Add("uncringe", Command{doCommandUncringe, "Stop cringing... for now", true})
 }
