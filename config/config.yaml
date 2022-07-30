@@ -53,3 +53,21 @@ discord:
 #
 # These options contains all the data necessary to configure the Markov chain.
 markov:
+  order: 6
+  maxRetries: 30
+  minNumberOfWords: 3
+  minNumberOfChars: 7
+  blacklistWords:
+    [ 
+      'http',
+      'everyone',
+    ]
+  data:
+    - name: 'general'
+      path: './data/markov/general.zip'
+      maxMessageLength: 500
+
+# Other Options
+# ===========
+#
+# These options contain other data that is used by the bot.
