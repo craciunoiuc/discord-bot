@@ -153,5 +153,5 @@ func randomPicture(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	s.ChannelMessageSendReply(m.ChannelID, AttachmentRandom(dbName), m.Reference())
+	s.ChannelMessageSend(m.ChannelID, AttachmentRandom(dbName))
 }
