@@ -132,3 +132,26 @@ func markovGenerate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Send the message
 	s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 }
+
+func randomPicture(s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	// Trim 'pic' from the start
+	msg := m.Content[len("pic"):]
+
+	// Extract the db name from the message
+	words := strings.SplitN(msg, " ", 3)
+	if len(words) == 1 {
+		s.ChannelMessageSendReply(m.ChannelID, "No db name provided. Try this:\n```\n"+
+			"pic <db name>```", m.Reference())
+		return
+	}
+	dbName := words[1]
+
+	if !AttachmentFileExists(dbName) {
+		s.ChannelMessageSendReply(m.ChannelID, "No picture database found with the name: "+dbName+
+			". Try these:\n```\n"+AttachmentFileList()+"```", m.Reference())
+		return
+	}
+
+	s.ChannelMessageSendReply(m.ChannelID, AttachmentRandom(dbName), m.Reference())
+}
