@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/craciunoiuc/discord-bot/spec"
-	"github.com/mb-14/gomarkov"
 )
 
 // SPDX-License-Identifier: BSD-3-Clause
@@ -42,8 +41,6 @@ import (
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
-var markovChains map[string]*gomarkov.Chain
 
 func splitSeps(r rune) bool {
 	return strings.ContainsRune(" .?,;:()[]{}\n\t\r", r)

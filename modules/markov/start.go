@@ -39,6 +39,8 @@ import (
 	"github.com/mb-14/gomarkov"
 )
 
+var markovChains map[string]*gomarkov.Chain
+
 type MarkovData struct {
 	Text string `json:"text"`
 	Meta string `json:"meta"`
@@ -55,7 +57,7 @@ func MarkovChainExists(name string) bool {
 
 func MarkovChainList() string {
 	result := ""
-	for name, _ := range markovChains {
+	for name := range markovChains {
 		result += name + "\n"
 	}
 	return result
