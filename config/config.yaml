@@ -39,6 +39,9 @@ discord:
   token:   'TOKEN'
   channel: 'bot_control'
   prefix:  '~'
+  attachments:
+    - name: 'general'
+      path: './data/attachments/general.zip'
   blacklistStickersGuildIds:
     [
       '865768900662788107',
