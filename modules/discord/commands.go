@@ -97,11 +97,16 @@ func uncringe(s *discordgo.Session, m *discordgo.MessageCreate) {
 func markovGenerate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Trim 'markov' from the start
-	msg := m.Content[len("markov "):]
+	msg := m.Content[len("markov"):]
 
 	// Extract the chain name from the message
-	words := strings.SplitN(msg, " ", 2)
-	chainName := words[0]
+	words := strings.SplitN(msg, " ", 3)
+	if len(words) == 1 {
+		s.ChannelMessageSendReply(m.ChannelID, "No chain name provided. Try this:\n```\n"+
+			"markov <chain name>```", m.Reference())
+		return
+	}
+	chainName := words[1]
 
 	// Check if the chain exists
 	if !markov.MarkovChainExists(chainName) {
