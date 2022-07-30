@@ -40,6 +40,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type AttachmentsDataConfig struct {
+	Name string `yaml:"name" default:"general"`
+	Path string `yaml:"path" default:"./data/attachments/general.zip"`
+}
+
 type MarkovDataConfig struct {
 	Name             string `yaml:"name" default:"general"`
 	Path             string `yaml:"path" default:"./data/markov/general.zip"`
@@ -47,20 +52,21 @@ type MarkovDataConfig struct {
 }
 
 type MarkovConfig struct {
-	Order            int                `yaml:"order" default:"2"`
-	Data             []MarkovDataConfig `yaml:"data" default:"[]"`
-	MaxRetries       int                `yaml:"maxRetries" default:"30"`
+	Order            int                `yaml:"order"            default:"2"`
+	Data             []MarkovDataConfig `yaml:"data"             default:"[]"`
+	MaxRetries       int                `yaml:"maxRetries"       default:"30"`
 	MinNumberOfWords int                `yaml:"minNumberOfWords" default:"3"`
 	MinNumberOfChars int                `yaml:"minNumberOfChars" default:"7"`
-	BlacklistWords   []string           `yaml:"blacklistWords" default:"[]"`
+	BlacklistWords   []string           `yaml:"blacklistWords"   default:"[]"`
 }
 
 type DiscordConfig struct {
-	Token                     string   `yaml:"token"     env:"DISCORD_TOKEN"     default:""`
-	Channel                   string   `yaml:"channel"   env:"DISCORD_CHANNEL"   default:""`
-	Prefix                    string   `yaml:"prefix"    env:"DISCORD_PREFIX"    default:"~"`
-	BlacklistStickersGuildIds []string `yaml:"blacklistStickersGuildIds"         default:"[]"`
-	CringeMasterUserIds       []string `yaml:"cringeMasterUserIds"               default:"[]"`
+	Token                     string                  `yaml:"token"     env:"DISCORD_TOKEN"     default:""`
+	Channel                   string                  `yaml:"channel"   env:"DISCORD_CHANNEL"   default:""`
+	Prefix                    string                  `yaml:"prefix"    env:"DISCORD_PREFIX"    default:"~"`
+	Attachments               []AttachmentsDataConfig `yaml:"attachments"                       default:"[]"`
+	BlacklistStickersGuildIds []string                `yaml:"blacklistStickersGuildIds"         default:"[]"`
+	CringeMasterUserIds       []string                `yaml:"cringeMasterUserIds"               default:"[]"`
 }
 
 type Config struct {
