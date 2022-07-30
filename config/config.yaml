@@ -39,7 +39,6 @@ discord:
   token:   'TOKEN'
   channel: 'bot_control'
   prefix:  '~'
-  genshinGuildIds:
   blacklistStickersGuildIds:
     [
       '865768900662788107',
