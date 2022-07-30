@@ -2,9 +2,11 @@ package discord
 
 // SPDX-License-Identifier: BSD-3-Clause
 //
-// Authors: Cezar Craciunoiu <cezar.craciunoiu@gmail.com>, Denis Ehorovici <dehorovici@gmail.com>
+// Authors: Cezar Craciunoiu <cezar.craciunoiu@gmail.com>
+//			Denis Ehorovici <dehorovici@gmail.com>
 //
 // Copyright (c) 2022, Universitatea POLITEHNICA Bucharest.  All rights reserved.
+// Copyright (c) 2022, Denis Ehorovici. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
