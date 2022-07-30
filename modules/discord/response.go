@@ -111,6 +111,7 @@ func init() {
 	commandsCollection = types.NewSortedMap[string, Command]()
 	commandsCollection.Add("help", Command{helpMenu, "Displays help menu", false})
 	commandsCollection.Add("ping", Command{pingPong, "Pong!", false})
+	commandsCollection.Add("markov", Command{markovGenerate, "database [start words] Generate a markov string. Can take additional arguments", false})
 	commandsCollection.Add("coinflip", Command{coinflip, "Coinflip", false})
 	commandsCollection.Add("cοinflip", Command{riggedCoinflip, "Rigged coinflip", true})
 	commandsCollection.Add("cringe", Command{cringe, "Destroy the cringe (mention users)", true})

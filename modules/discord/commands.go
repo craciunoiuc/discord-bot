@@ -35,9 +35,11 @@ package discord
 
 import (
 	"math/rand"
+	"strings"
 
 	linq "github.com/ahmetb/go-linq"
 	"github.com/bwmarrin/discordgo"
+	"github.com/craciunoiuc/discord-bot/modules/markov"
 	spec "github.com/craciunoiuc/discord-bot/spec"
 )
 
@@ -90,4 +92,38 @@ func cringe(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func uncringe(s *discordgo.Session, m *discordgo.MessageCreate) {
 	cringeObjective = nil
+}
+
+func markovGenerate(s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	// Trim 'markov' from the start
+	msg := m.Content[len("markov "):]
+
+	// Extract the chain name from the message
+	words := strings.SplitN(msg, " ", 2)
+	chainName := words[0]
+
+	// Check if the chain exists
+	if !markov.MarkovChainExists(chainName) {
+		s.ChannelMessageSendReply(m.ChannelID, "No markov chain found with name "+chainName+
+			". Try these:\n```\n"+markov.MarkovChainList()+"```", m.Reference())
+		return
+	}
+
+	// Trim the chain name from the message
+	msg = msg[len(chainName):]
+
+	// Trim space
+	if msg != "" {
+		msg = msg[1:]
+	}
+
+	// Generate a message
+	response := markov.MarkovGenerate(chainName, msg)
+	if response == "" {
+		s.ChannelMessageSendReply(m.ChannelID, "Could not generate, try something else :(", m.Reference())
+	}
+
+	// Send the message
+	s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 }
