@@ -40,7 +40,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type MarkovDataConfig struct {
+	Name             string `yaml:"name" default:"general"`
+	Path             string `yaml:"path" default:"./data/markov/general.zip"`
+	MaxMessageLength int    `yaml:"maxMessageLength" default:"500"`
+}
+
 type MarkovConfig struct {
+	Order            int                `yaml:"order" default:"2"`
+	Data             []MarkovDataConfig `yaml:"data" default:"[]"`
+	MaxRetries       int                `yaml:"maxRetries" default:"30"`
+	MinNumberOfWords int                `yaml:"minNumberOfWords" default:"3"`
+	MinNumberOfChars int                `yaml:"minNumberOfChars" default:"7"`
+	BlacklistWords   []string           `yaml:"blacklistWords" default:"[]"`
 }
 
 type DiscordConfig struct {
