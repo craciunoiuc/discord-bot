@@ -68,6 +68,10 @@ func messageHasStickersFromBlacklistedGuild(s *discordgo.Session, m *discordgo.M
 	return guildIsBlacklistedForStickers(sticker.GuildID)
 }
 
+func messageHasGenshinRelatedContent(m *discordgo.MessageCreate) bool {
+	return strings.Contains(strings.ToLower(m.Content), "genshin")
+}
+
 func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if messageIsCringe(m) {
 		message, error := s.ChannelMessageSendReply(m.ChannelID, "cringe", m.Reference())
@@ -77,7 +81,7 @@ func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if messageIsFromCringeMaster(m) {
-		if messageHasStickersFromBlacklistedGuild(s, m) {
+		if messageHasStickersFromBlacklistedGuild(s, m) || messageHasGenshinRelatedContent(m) {
 			message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/genshin-impact-zyzz-gif-24919214", m.Reference())
 			if message == nil {
 				fmt.Println(error.Error())
