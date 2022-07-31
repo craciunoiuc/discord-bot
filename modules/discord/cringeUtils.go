@@ -82,7 +82,7 @@ func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if message == nil {
 				fmt.Println(error.Error())
 			}
-		} else if strings.Contains(m.Content, "lmao") {
+		} else if strings.Contains(strings.ToLower(m.Content), "lmao") {
 			message, error := s.ChannelMessageSendReply(m.ChannelID, "lmao stfu", m.Reference())
 			if message == nil {
 				fmt.Println(error.Error())
