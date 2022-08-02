@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/craciunoiuc/discord-bot/spec"
 )
 
 func VoiceStateUpdateResponse(s *discordgo.Session, m *discordgo.VoiceStateUpdate) {
@@ -12,6 +13,6 @@ func VoiceStateUpdateResponse(s *discordgo.Session, m *discordgo.VoiceStateUpdat
 	}
 
 	if m.SelfStream {
-		s.ChannelMessageSend("1002306935653159102", fmt.Sprintf("<@%s> Oprește live-ul!", m.UserID))
+		s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("<@%s> Oprește live-ul!", m.UserID))
 	}
 }
