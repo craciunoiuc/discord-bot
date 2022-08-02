@@ -7,7 +7,7 @@ import (
 )
 
 func TypingStartResponse(s *discordgo.Session, m *discordgo.TypingStart) {
-	if !userIsCringeMaster(m.UserID) {
+	if m.UserID == s.State.User.ID || !userIsCringeMaster(m.UserID) {
 		return
 	}
 

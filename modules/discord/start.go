@@ -54,12 +54,12 @@ func DiscordStart() {
 }
 
 func discordConfigSession(s *discordgo.Session) {
-	// Register the messageCreate func as a callback for MessageCreate events.
 	s.AddHandler(MessageCreateResponse)
 	s.AddHandler(TypingStartResponse)
+	s.AddHandler(PresenceResponse)
 
 	// In this example, we only care about receiving message events.
-	s.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuildMessageTyping
+	s.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuildMessageTyping | discordgo.IntentsGuildPresences
 }
 
 func discordIdleLoop(s *discordgo.Session) {
