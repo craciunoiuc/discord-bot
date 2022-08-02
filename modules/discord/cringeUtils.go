@@ -47,7 +47,7 @@ func messageIsCringe(m *discordgo.MessageCreate) bool {
 }
 
 func messageIsFromCringeMaster(m *discordgo.MessageCreate) bool {
-	return slices.Contains(spec.Cfg.DiscordCfg.CringeMasterUserIds, m.Author.ID)
+	return userIsCringeMaster(m.Author.ID)
 }
 
 func guildIsBlacklistedForStickers(guildId string) bool {

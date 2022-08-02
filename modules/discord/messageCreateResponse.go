@@ -52,7 +52,7 @@ var commandsCollection *types.SortedMap[string, Command]
 var cringeObjective *CringeObjective
 
 // Parses all messages sent to the bot and calls the appropriate command
-func MessageResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
+func MessageCreateResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
 		return
