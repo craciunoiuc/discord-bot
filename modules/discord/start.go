@@ -57,9 +57,13 @@ func discordConfigSession(s *discordgo.Session) {
 	s.AddHandler(MessageCreateResponse)
 	s.AddHandler(TypingStartResponse)
 	s.AddHandler(PresenceResponse)
+	s.AddHandler(VoiceStateUpdateResponse)
 
 	// In this example, we only care about receiving message events.
-	s.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuildMessageTyping | discordgo.IntentsGuildPresences
+	s.Identify.Intents = discordgo.IntentsGuildMessages |
+		discordgo.IntentsGuildMessageTyping |
+		discordgo.IntentsGuildPresences |
+		discordgo.IntentsGuildVoiceStates
 }
 
 func discordIdleLoop(s *discordgo.Session) {
