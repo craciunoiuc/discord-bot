@@ -12,7 +12,7 @@ func VoiceStateUpdateResponse(s *discordgo.Session, m *discordgo.VoiceStateUpdat
 		return
 	}
 
-	if m.SelfStream {
-		s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("<@%s> Oprește live-ul!", m.UserID))
+	if (m.BeforeUpdate == nil || !m.BeforeUpdate.SelfStream) && m.SelfStream {
+		s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("<@%s> oprește live-ul că-mi faci lag!", m.UserID))
 	}
 }
