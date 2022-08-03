@@ -87,7 +87,7 @@ func handleCringeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 				fmt.Println(error.Error())
 			}
 		} else if strings.Contains(strings.ToLower(m.Content), "lmao") {
-			message, error := s.ChannelMessageSendReply(m.ChannelID, "lmao stfu", m.Reference())
+			message, error := s.ChannelMessageSendReply(m.ChannelID, "https://tenor.com/view/rats-runny-poop-kysa-laga-mera-majak-kys-funny-gif-24942855", m.Reference())
 			if message == nil {
 				fmt.Println(error.Error())
 			}
