@@ -18,17 +18,42 @@ func PresenceResponse(s *discordgo.Session, m *discordgo.PresenceUpdate) {
 		return
 	}
 
+	member, err := s.GuildMember(m.GuildID, m.User.ID)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	if member.User.Bot {
+		return
+	}
+
+	nickname := member.Nick
+	if nickname == "" {
+		nickname = member.User.Username
+	}
+
 	prevStatus, found := prevStatusMap[m.User.ID]
 
-	if m.Status == discordgo.StatusOnline {
-		if found && prevStatus == discordgo.StatusOnline {
-			s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("<@%s> lasă telefonul!", m.User.ID))
-		} else if !found || prevStatus == discordgo.StatusOffline || prevStatus == discordgo.StatusInvisible {
-			s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, "Păzea")
+	if statusIsOnline(m.Status) && (!found || statusIsOffline(prevStatus)) {
+		if messageCooldownHandler.CanTriggerPresenceOnline(m.User.ID) {
+			s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("Păzea că vine %s :scream:", nickname))
+			messageCooldownHandler.TriggerPresenceOnline(m.User.ID)
 		}
-	} else if (!found || prevStatus == discordgo.StatusOnline) && m.Status == discordgo.StatusOffline {
-		s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, "Doamne-ajută")
+	} else if statusIsOffline(m.Status) && (!found || statusIsOnline(prevStatus)) {
+		if messageCooldownHandler.CanTriggerPresenceOffline(m.User.ID) {
+			s.ChannelMessageSend(spec.Cfg.DiscordCfg.GuildMainChannelId, fmt.Sprintf("Doamne-ajută, a plecat %s :pray:", nickname))
+			messageCooldownHandler.TriggerPresenceOffline(m.User.ID)
+		}
 	}
 
 	prevStatusMap[m.User.ID] = m.Status
+}
+
+func statusIsOnline(status discordgo.Status) bool {
+	return status == discordgo.StatusOnline || status == discordgo.StatusDoNotDisturb || status == discordgo.StatusIdle
+}
+
+func statusIsOffline(status discordgo.Status) bool {
+	return status == discordgo.StatusOffline || status == discordgo.StatusInvisible
 }

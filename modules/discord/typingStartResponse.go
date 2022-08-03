@@ -26,5 +26,8 @@ func TypingStartResponse(s *discordgo.Session, m *discordgo.TypingStart) {
 		nickname = member.User.Username
 	}
 
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Ia că scrie %s", nickname))
+	if messageCooldownHandler.CanTriggerTypingStart(m.UserID) {
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Ia că scrie %s", nickname))
+		messageCooldownHandler.TriggerTypingStart(m.UserID)
+	}
 }
