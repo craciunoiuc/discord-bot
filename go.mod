@@ -11,6 +11,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
+require golang.org/x/text v0.7.0
+
 require (
 	github.com/ahmetb/go-linq v3.0.0+incompatible
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -21,7 +23,7 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 )
 
 replace github.com/coreos/bbolt => go.etcd.io/bbolt v1.3.5

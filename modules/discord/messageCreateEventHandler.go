@@ -59,6 +59,7 @@ func MessageCreateResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	handleCringeMessages(s, m)
+	handleFunnyMessages(s, m)
 
 	// Ignore all messages that don't start with the tag
 	if !strings.HasPrefix(m.Content, "<@"+s.State.User.ID+"> ") &&
