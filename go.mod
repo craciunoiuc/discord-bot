@@ -3,7 +3,7 @@ module github.com/craciunoiuc/discord-bot
 go 1.18
 
 require (
-	github.com/bwmarrin/discordgo v0.27.0
+	github.com/bwmarrin/discordgo v0.27.1
 	github.com/mb-14/gomarkov v0.0.0-20210216094942-a5b484cc0243
 	github.com/muesli/termenv v0.14.0
 	github.com/spf13/cobra v1.6.1
